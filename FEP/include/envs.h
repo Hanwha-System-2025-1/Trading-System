@@ -22,7 +22,7 @@
 // Database settings
 #define MYSQL_IP "host.docker.internal"        
 #define MYSQL_USER "root"                   
-#define MYSQL_PW "ssafy"                     
+#define MYSQL_PW "Hanwha1!"                     
 #define MYSQL_DBNAME "hanwha_mci"                 
 
 #endif // ENVS_H

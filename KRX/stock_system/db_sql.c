@@ -15,7 +15,7 @@
 
 #define DB_HOST "host.docker.internal" // Docker 내부에서 MySQL 컨테이너에 접근하기 위한 호스트 이름
 #define DB_USER "root"
-#define DB_PASS "ssafy"
+#define DB_PASS "Hanwha1!"
 #define DB_NAME "hanwha_krx"
 
 

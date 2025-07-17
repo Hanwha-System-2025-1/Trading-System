@@ -19,26 +19,22 @@ function Login({onLogin}) {
       const response = await api.post("/api/login", {
         username,
         password,
-      });
+      },{timeout:2000});
 
       // 응답 데이터를 구조 분해 할당
       const { success, message } = response.data;
 
-      // 로그인 검증 후 성공 처리
+      // 로그인 응답이 200인 경우
       if (success) {
         // 로그인 성공 시 유저 정보 저장
-        const userInfo = { username };
         console.log("로그인 성공:", response.data);
+        const userInfo = { username };
         onLogin(userInfo);
         navigate('/stock')
-      } else {
-        // 로그인 검증 후 실패 처리
-        console.log(message || "로그인에 실패했습니다.");
-        setErrorMessage(message || "로그인에 실패했습니다.");
       }
     } catch (error) {
-      // 로그인 실패 처리(MCI로부터 로그인 응답을 못 받은 경우 등)
-      console.error("로그인 에러:", error.response?.data || error.message);
+      // 로그인 응답이 200번대가 아닌 경우
+      console.error("로그인 실패:", error.response?.data.message || error.message);
       setErrorMessage(
         error.response?.data?.message || "로그인 중 오류가 발생했습니다."
       );
@@ -80,14 +76,14 @@ function Login({onLogin}) {
                 onChange={(e) => setPassword(e.target.value)}
               />
               
-              <div className={styles.rememberMe}>
+              {/* <div className={styles.rememberMe}>
                 <input
                   type="checkbox"
                   id="remember"
                   className={styles.checkbox}
                 />
                 <label htmlFor="remember">아이디 저장</label>
-              </div>
+              </div> */}
               
               <button type="submit" onClick={handleLogin} className={styles.loginButton}>
                 로그인
@@ -95,14 +91,14 @@ function Login({onLogin}) {
             </form>
             
             <div className={styles.footer}>
-              <a href="#" className={styles.footerLink}>아이디등록</a>
-              <img
+              <p href="#" className={styles.footerLink}>증권ITO팀</p>
+              {/* <img
                 loading="lazy"
                 src="https://cdn.builder.io/api/v1/image/assets/TEMP/121f0634545c56ab3b69ef976c33a7af5d2e0592ce4f393505ba40c14de7f8c9?placeholderIfAbsent=true&apiKey=76373063de8c47ab8cdeeecfaeeac5fc"
                 className={styles.divider}
                 alt=""
               />
-              <a href="#" className={styles.footerLink}>아이디/비밀번호찾기</a>
+              <a href="#" className={styles.footerLink}>아이디/비밀번호찾기</a> */}
             </div>
           </div>
         </div>

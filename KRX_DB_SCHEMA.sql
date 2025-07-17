@@ -15,7 +15,7 @@ CREATE TABLE market_prices (
     stock_price INT NOT NULL,               -- 현재가
     volume BIGINT NOT NULL,                 -- 거래량
     contrast INT NOT NULL,                  -- 대비
-    fluctuation_rate VARCHAR(6) NOT NULL,   -- 등락률
+    fluctuation_rate VARCHAR(10) NOT NULL,   -- 등락률
     buying_balance INT NOT NULL,            -- 매수잔량
     selling_balance INT NOT NULL,           -- 매도잔량
     bid_price INT NOT NULL,                 -- 매수호가

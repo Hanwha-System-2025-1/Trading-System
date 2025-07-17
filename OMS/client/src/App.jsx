@@ -7,7 +7,7 @@ import Order from './pages/Order';
 import NotFound from './components/NotFound';
 
 function App() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({});
 
   // 새로고침, 브라우저를 닫았다가 다시 열 때 로그인 상태 복원
   useEffect(() => {
@@ -34,22 +34,24 @@ function App() {
     <Router>
       <Routes>
         {/* 로그인 페이지 */}
-        <Route path="/" element={user ? <Stock onLogout={handleLogout} /> : <Login onLogin={handleLogin}/>} />
+        <Route path="/" element={<Login onLogin={handleLogin}/>} />
         
         {/* 종목 페이지 (로그인 후 접근 가능) */}
-        <Route path="/stock" element={user ? <Stock onLogout={handleLogout} /> : <Login onLogin={handleLogin} />} />
+        {/* <Route path="/stock" element={user ? <Stock onLogout={handleLogout} /> : <Login onLogin={handleLogin} />} /> */}
+        <Route path="/stock" element={<Stock user={user} onLogout={handleLogout} /> } />
         
         {/* 주문 페이지 (스톡에서 주문 버튼 클릭 시 이동) */}
-        <Route path="/order" element={user ? <Order /> : <Login onLogin={handleLogin} />} />
+        {/* <Route path="/order" element={user ? <Order/> : <Login onLogin={handleLogin} />} /> */}
+        <Route path="/order" element={ <Order user={user.username} /> } />
 
         {/* 특정 종목 주문 페이지 */}
-        {/* <Route path="stock/:stockId" element={<Order />}></Route> */}
+        <Route path="stock/:stockId" element={<Order user={user.username} />} />
 
         {/* 잘못된 경로 */}
         <Route path="*" element={<NotFound />}></Route>
       </Routes>
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;

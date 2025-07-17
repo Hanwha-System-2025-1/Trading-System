@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { io } from "socket.io-client";
 import Title from "../components/Title";
 import api from "../utils/api";
 import CustomCircularProgress from "../components/CustomCircularProgress";
@@ -7,7 +8,56 @@ import { useQuery } from "react-query";
 import StockCard from "../components/Stock/StockCard";
 import { Helmet } from "react-helmet";
 
-const Stock = ({onLogout}) => {
+const socket = io("http://localhost:5000"); //백엔드와 웹소켓 연결 생성
+
+const Stock = ({user, onLogout}) => {
+  const [isLoading, setIsLoading] = useState(true)
+  const [marketData, setMarketData] = useState([
+    {
+      stock_code: "000001",
+      stock_name: "Stock1",
+      price: 1000,
+      change: 0,
+      rate_of_change: "+0.0%",
+    },
+    {
+      stock_code: "000002",
+      stock_name: "Stock2",
+      price: 1100,
+      change: 10,
+      rate_of_change: "+1.0%",
+    },
+    {
+      stock_code: "000003",
+      stock_name: "Stock3",
+      price: 1200,
+      change: 20,
+      rate_of_change: "+2.0%",
+    },
+    {
+      stock_code: "000004",
+      stock_name: "Stock4",
+      price: 1300,
+      change: 30,
+      rate_of_change: "+3.0%",
+    }
+  ]);
+
+
+  // 종목 실시간 데이터 업데이트
+  useEffect(() => {
+    socket.on("marketData", (data) => {
+      setMarketData(data.marketData);
+      setIsLoading(false)
+    });  // 마운트 될 때, 등록 후 서버에서 "marketData" 이벤트를 보낼 때마다 setMarketData()가 실행
+
+    return () => {
+      socket.off("marketData");
+    }; // useEffe1ct 정리 함수(컴포넌트가 제거될 때, 이벤트 리스너를 해제하여 메모리 누수 방지)
+  }, []);
+
+
+  // 테스트용 데이터
   const [stockList, setStockList] = useState([
     {
       "stockId": "001",
@@ -17,78 +67,6 @@ const Stock = ({onLogout}) => {
       "rateDifference": "-0.71",
       "liked": true
     },
-    {
-      "stockId": "002",
-      "stockName": "LG Chem",
-      "currentPrice": 800000,
-      "priceDifference": "20000",
-      "rateDifference": "2.56",
-      "liked": false
-    },
-    {
-      "stockId": "003",
-      "stockName": "SK Hynix",
-      "currentPrice": 120000,
-      "priceDifference": "3000",
-      "rateDifference": "2.56",
-      "liked": true
-    },
-    {
-      "stockId": "004",
-      "stockName": "Hyundai Motor",
-      "currentPrice": 200000,
-      "priceDifference": "-10000",
-      "rateDifference": "-4.76",
-      "liked": false
-    },
-    {
-      "stockId": "005",
-      "stockName": "POSCO",
-      "currentPrice": 300000,
-      "priceDifference": "5000",
-      "rateDifference": "1.69",
-      "liked": true
-    },
-    {
-      "stockId": "006",
-      "stockName": "Samsung Biologics",
-      "currentPrice": 700000,
-      "priceDifference": "-10000",
-      "rateDifference": "-1.42",
-      "liked": true
-    },
-    {
-      "stockId": "007",
-      "stockName": "LG Display",
-      "currentPrice": 150000,
-      "priceDifference": "4000",
-      "rateDifference": "2.73",
-      "liked": false
-    },
-    {
-      "stockId": "008",
-      "stockName": "Kakao",
-      "currentPrice": 120000,
-      "priceDifference": "-3000",
-      "rateDifference": "-2.44",
-      "liked": true
-    },
-    {
-      "stockId": "009",
-      "stockName": "Celltrion",
-      "currentPrice": 300000,
-      "priceDifference": "-10000",
-      "rateDifference": "-3.23",
-      "liked": false
-    },
-    {
-      "stockId": "010",
-      "stockName": "KB Financial Group",
-      "currentPrice": 50000,
-      "priceDifference": "1000",
-      "rateDifference": "2.04",
-      "liked": true
-    }
   ]);
 
   // const { isLoading, isError } = useQuery("stock-all", async () => {
@@ -101,25 +79,24 @@ const Stock = ({onLogout}) => {
   //   console.log(response.data.data);
   // });
 
-  // if (isLoading || isError) {
-  //   return <CustomCircularProgress />;
-  // }
-
   return (
-    <div className="w-full h-full p-8 min-h-0">
-      {/* <Helmet>
-        <title>{"헬멧!?"}</title>
-      </Helmet> */}
-      <div className="w-full h-[100%] bg-white shadow-lg rounded-md p-4">
-        <Title onLogout={onLogout} title="전체 종목 조회"/>
+    <div className="w-full h-full bg-white shadow-lg rounded-md p-8">
+      <Title onLogout={onLogout} title="전체 종목 조회"/>
         <div className="w-full h-[90%] min-h-0 overflow-y-auto no-scrollbar">
           <div className="w-full min-h-0 grid grid-cols-3 gap-4 no-scrollbar place-items-center">
-            {stockList.map((item, index) => (
+            {isLoading ? <CustomCircularProgress/> : null}
+            {marketData.map((item, index) => (
               <StockCard size="medium" item={item} key={index} />
             ))}
           </div>
         </div>
-      </div>
+
+        {isLoading && (
+          <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center backdrop-blur-sm z-50">
+            <CustomCircularProgress />
+          </div>
+        )}
+
     </div>
   );
 };

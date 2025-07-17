@@ -2,7 +2,7 @@ import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { getStockStyle } from "../../utils/getStockStyle";
 import api from "../../utils/api";
-import logoImage from "../../assets/hanwha.png"
+import logoImage from "../../assets/hanwha.png";
 import Card from "./Card";
 // import LikeButton from "./LikeButton";
 import Avatar from "@mui/joy/Avatar";
@@ -10,9 +10,19 @@ import Avatar from "@mui/joy/Avatar";
 /** 주식종목 카드 */
 const StockCard = ({ item, size }) => {
   const navigate = useNavigate();
-  const { stockId, stockName, currentPrice, priceDifference, rateDifference } =
-    item;
-  const { textColor, icon } = getStockStyle(rateDifference);
+  const {
+    stock_code,
+    stock_name,
+    price,
+    volume,
+    change,
+    rate_of_change,
+    hoga,
+    high_price,
+    low_price,
+    market_time,
+  } = item;
+  const { textColor, icon } = getStockStyle(change); // 대비와 등락률에 따른 스타일 변환
 
   // size별 카드 크기
   const width = size === "medium" ? "w-[300px] " : "w-[212px] ";
@@ -23,7 +33,20 @@ const StockCard = ({ item, size }) => {
 
   // 상세조회 페이지 이동
   const handleCardClick = () => {
-    navigate(`/stock/${stockId}`);
+    navigate(`/stock/${stock_code}`, {
+      state: {
+        stock_code,
+        stock_name,
+        price,
+        volume,
+        change,
+        rate_of_change,
+        hoga,
+        high_price,
+        low_price,
+        market_time,
+      },
+    });
   };
 
   // Access 토큰 가져오기
@@ -49,7 +72,6 @@ const StockCard = ({ item, size }) => {
     <div className={`${width}`} onClick={handleCardClick}>
       <Card className="hover:cursor-pointer" size={size}>
         <div className="h-full flex flex-col justify-between relative">
-
           <div className="absolute right-0 top-0">
             {/* 좋아요 data가 반환되면 좋아요 버튼 활성화 */}
             {data && (
@@ -65,7 +87,7 @@ const StockCard = ({ item, size }) => {
 
           <div className="flex items-start gap-2">
             <p className={`${xsText} text-slate-500 `}>KOSPI</p>
-            <p className={`${xsText} text-slate-500 `}>{stockId}</p>
+            <p className={`${xsText} text-slate-500 `}>{stock_code}</p>
           </div>
 
           <div className="flex items-center gap-2">
@@ -74,20 +96,17 @@ const StockCard = ({ item, size }) => {
               size="sm"
               sx={{ "--Avatar-size": avatarSize }}
             />
-            <h2 className={`${mdText}`}>{stockName}</h2>
+            <h2 className={`${mdText} text-black `}>{stock_name}</h2>
           </div>
 
           <div className="flex items-center">
             <p className={`${xlText} mr-5 ` + textColor}>
-              {currentPrice.toLocaleString()}
+              {price.toLocaleString()}
             </p>
             <p className={`${xsText} text-center ` + textColor}>
-              {icon} {Math.abs(priceDifference).toLocaleString()} (
-              {priceDifference > 0 ? "+" : null}
-              {Number(rateDifference).toFixed(2)}%)
+              {icon} {Math.abs(change).toLocaleString()} ({rate_of_change})
             </p>
           </div>
-          
         </div>
       </Card>
     </div>
