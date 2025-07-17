@@ -1,0 +1,16 @@
+services:
+  fep:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hanwha_fep_server
+    ports:
+      - "8081:8081"
+    networks:
+      - trading_net
+    stdin_open: true
+    tty: true
+
+networks:
+  trading_net:
+    external: true

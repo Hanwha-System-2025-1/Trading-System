@@ -1,0 +1,16 @@
+services:
+  mci:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hanwha_mci_server
+    ports:
+      - "8080:8080"
+    networks:
+      - trading_net
+    stdin_open: true
+    tty: true
+
+networks:
+  trading_net:
+    external: true

@@ -1,0 +1,14 @@
+services:
+  krx:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hanwha_krx_server
+    networks:
+      - trading_net
+    stdin_open: true
+    tty: true
+
+networks:
+  trading_net:
+    external: true
